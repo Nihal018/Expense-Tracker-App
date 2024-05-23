@@ -43,7 +43,7 @@ function ExpenseOverview() {
       <BottomTab.Screen
         name="AllExpenses"
         component={AllExpenses}
-        options={{
+        options={({ navigation }) => ({
           title: "All Expenses",
           tabBarLabel: "All Expenses",
           tabBarIcon: ({ color, size }) => {
@@ -57,12 +57,11 @@ function ExpenseOverview() {
               size={24}
               color={tintColor}
               onPress={() => {
-                const navigation = useNavigation();
                 navigation.navigate("ManageExpense");
               }}
             />
           ),
-        }}
+        })}
       />
     </BottomTab.Navigator>
   );
@@ -71,13 +70,24 @@ function ExpenseOverview() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerTintColor: "white",
+        }}
+      >
         <Stack.Screen
           name="ExpensesOverview"
           component={ExpenseOverview}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name="ManageExpense" component={ManageExpense} />
+        <Stack.Screen
+          name="ManageExpense"
+          component={ManageExpense}
+          options={{
+            presentation: "modal",
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

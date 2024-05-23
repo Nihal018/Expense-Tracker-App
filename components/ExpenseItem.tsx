@@ -5,12 +5,15 @@ import { useNavigation } from "@react-navigation/native";
 export default function ExpenseItem({ id, cost, title, date }) {
   const navigation = useNavigation();
   const ItemPressHandler = () => {
-    navigation.navigate("ManageExpense");
+    return navigation.navigate("ManageExpense", {
+      expenseId: id,
+    });
   };
+
   return (
     <View className=" my-2 border-1 rounded-xl bg-indigo-600 ">
       <Pressable
-        onPress={() => ItemPressHandler}
+        onPress={ItemPressHandler}
         style={({ pressed }) => (pressed ? styles.pressedItem : null)}
       >
         <View className="flex-row justify-between align-middle">
