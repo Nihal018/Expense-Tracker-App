@@ -1,71 +1,42 @@
-import {
-  View,
-  StyleSheet,
-  Text,
-  Modal,
-  Alert,
-  Pressable,
-  StatusBar,
-} from "react-native";
+import { View, StyleSheet, Text, StatusBar } from "react-native";
 import Header from "../components/Header";
 import ExpenseList from "../components/ExpenseList";
-import { useState } from "react";
+import { useContext } from "react";
+import { ExpensesContext } from "../store/exoenses-context";
+import { getDateMinusDays } from "../util/date";
 
-function RecentScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const setModal = () => {
-    setModalVisible(true);
-  };
-  const addPress = () => {
-    setModalVisible(!modalVisible);
-  };
+function RecentScreen({ navigation }) {
+  const ExpenseCxt = useContext(ExpensesContext);
+
+  const recentExpenses = ExpenseCxt.expenses.filter((expense) => {
+    const today = new Date();
+    const weekAgo = getDateMinusDays(today, 7);
+    return expense.date >= weekAgo && expense.date <= today;
+  });
+
+  const expensesSum = recentExpenses.reduce((sum, expense) => {
+    return sum + expense.cost;
+  }, 0);
+
+  let content = (
+    <Text className="text-center m-12">No Expenses during last week</Text>
+  );
+
+  if (recentExpenses.length > 0)
+    content = <ExpenseList list={recentExpenses} />;
 
   return (
     <View className="bg-indigo-800 h-full w-full ">
       <StatusBar style="auto" />
-      <Header addPress={addPress} />
-
-      <Modal
-        animationType="slide"
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View className="flex-1 justify-center align-middle">
-          <View className=" ">
-            <Text className="text-white text-lg">Add Expense</Text>
-          </View>
-          <View className="flex-row justify-center align-middle mt-2">
-            <Pressable
-              className="mx-2 "
-              onPress={() => addPress}
-              style={({ pressed }) =>
-                pressed ? styles.pressedModalButton : null
-              }
-            >
-              <Text className="text-white">Cancel</Text>
-            </Pressable>
-
-            <Pressable
-              className="mx-2 "
-              onPress={() => addPress}
-              style={({ pressed }) =>
-                pressed ? styles.pressedModalButton : null
-              }
-            >
-              <Text className="text-white">Add</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+      <Header />
 
       <View className="h-auto py-2 px-4 flex-row bg-pink-100 justify-between align-baseline rounded-lg my-4 mx-4 ">
         <Text className="text-purple-500 text-md pt-1">Last Week</Text>
-        <Text className="text-lg text-purple-500 font-bold ">$ 67.89</Text>
+        <Text className="text-lg text-purple-500 font-bold ">
+          ${expensesSum.toFixed(2)}
+        </Text>
       </View>
-      <ExpenseList />
+      {content}
     </View>
   );
 }

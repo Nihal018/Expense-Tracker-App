@@ -6,6 +6,8 @@ module.exports = {
     "./components/ExpenseItem.tsx",
     "./components/Header.tsx",
     "./components/ExpenseList.tsx",
+    "./screens/AllExpenses.tsx",
+    "./screens/ManageExpense.tsx",
     "./<custom directory>/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {

@@ -2,7 +2,7 @@ import { createContext, useReducer } from "react";
 
 import Expense from "../models/Expense";
 
-export const EXPENSES = [
+const EXPENSES = [
   new Expense(1, "Pizza", 9.99, "2024-05-19"),
   new Expense(2, "Italian Suit", 500, "2024-05-19"),
   new Expense(3, "Metro Fare", 5, "2024-05-12"),
@@ -13,12 +13,12 @@ export const EXPENSES = [
 
 export const ExpensesContext = createContext({
   expenses: [],
-  addExpense: ({ description, cost, title }) => {},
+  addExpense: ({ date, cost, title }) => {},
   updateExpense: (id, { title, date, cost }) => {},
   deleteExpense: (id) => {},
 });
 
-function expensesReducer(state, action) {
+function ExpensesReducer(state, action) {
   switch (action.type) {
     case "ADD":
       const id = new Date().toString() + Math.random().toString();
@@ -33,7 +33,7 @@ function expensesReducer(state, action) {
       updatedExpenses[updatableExpenseIndex] = updatedItem;
       return updatedExpenses;
     case "DELETE":
-      return state.filter((expense) => expense.id !== action.payload);
+      return state.filter((expense) => expense.id !== action.id);
     default:
       return state;
   }
