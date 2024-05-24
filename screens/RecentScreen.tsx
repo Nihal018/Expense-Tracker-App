@@ -1,12 +1,20 @@
 import { View, StyleSheet, Text, StatusBar } from "react-native";
 import Header from "../components/Header";
 import ExpenseList from "../components/ExpenseList";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ExpensesContext } from "../store/exoenses-context";
 import { getDateMinusDays } from "../util/date";
-
+import { fetchExpense } from "../util/http";
 function RecentScreen({ navigation }) {
   const ExpenseCxt = useContext(ExpensesContext);
+
+  useEffect(() => {
+    async function getExpense() {
+      const expenses = await fetchExpense();
+      ExpenseCxt.setExpense(expenses);
+    }
+    getExpense();
+  }, []);
 
   const recentExpenses = ExpenseCxt.expenses.filter((expense) => {
     const today = new Date();

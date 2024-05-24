@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert, Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 
 import Input from "./Input";
 import { useState } from "react";
@@ -49,9 +49,9 @@ function ExpenseForm({
     if (!amountIsValid || !dateIsValid || !descriptionIsValid) {
       setInputs((curInputs) => {
         return {
-          amount: { value: curInputs.cost.value, isValid: amountIsValid },
+          cost: { value: curInputs.cost.value, isValid: amountIsValid },
           date: { value: curInputs.date.value, isValid: dateIsValid },
-          description: {
+          title: {
             value: curInputs.title.value,
             isValid: descriptionIsValid,
           },
@@ -112,7 +112,7 @@ function ExpenseForm({
         <Button style={styles.button} mode="flat" onPress={onCancel}>
           Cancel
         </Button>
-        <Button style={styles.button} onPress={submitHandler} mode={""}>
+        <Button style={styles.button} mode="" onPress={submitHandler}>
           {submitButtonLabel}
         </Button>
       </View>

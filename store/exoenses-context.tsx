@@ -2,18 +2,10 @@ import { createContext, useReducer } from "react";
 
 import Expense from "../models/Expense";
 
-const EXPENSES = [
-  new Expense("1", "Pizza", 9.99, "2024-05-19"),
-  new Expense("2", "Italian Suit", 500, "2024-05-19"),
-  new Expense("3", "Metro Fare", 5, "2024-05-12"),
-  new Expense("4", "Weekly German Classes", 20, "2024-04-09"),
-  new Expense("5", "New Chair", 10, "2024-05-17"),
-  new Expense("6", "Exotic Fruits", 100, "2024-05-18"),
-];
-
 export const ExpensesContext = createContext({
   expenses: [],
   addExpense: ({ date, cost, title }) => {},
+  setExpense: (expenses) => {},
   updateExpense: (id, { title, date, cost }) => {},
   deleteExpense: (id) => {},
 });
@@ -23,6 +15,8 @@ function ExpensesReducer(state, action) {
     case "ADD":
       const id = new Date().toString() + Math.random().toString();
       return [{ ...action.payload, id: id }, ...state];
+    case "SET":
+      return action.payload;
     case "UPDATE":
       const updatableExpenseIndex = state.findIndex(
         (expense) => expense.id === action.payload.id
@@ -40,23 +34,28 @@ function ExpensesReducer(state, action) {
 }
 
 function ExpensesContextProvider({ children }) {
-  const [expensesState, dispatch] = useReducer(ExpensesReducer, EXPENSES);
+  const [expensesState, dispatch] = useReducer(ExpensesReducer, []);
 
   function addExpense(expenseData) {
-    dispatch({ type: "Add", payload: expenseData });
+    dispatch({ type: "ADD", payload: expenseData });
+  }
+
+  function setExpense(expenses) {
+    dispatch({ type: "SET", payload: expenses });
   }
 
   function deleteExpense(id) {
-    dispatch({ type: "delete", payload: id });
+    dispatch({ type: "DELETE", payload: id });
   }
 
   function updateExpense(id, expenseData) {
-    dispatch({ type: "update", payload: { ...expenseData, id: id } });
+    dispatch({ type: "UPDATE", payload: { ...expenseData, id: id } });
   }
 
   const value = {
     expenses: expensesState,
     addExpense: addExpense,
+    setExpense: setExpense,
     deleteExpense: deleteExpense,
     updateExpense: updateExpense,
   };
