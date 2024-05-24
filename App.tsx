@@ -21,7 +21,7 @@ function ExpenseOverview() {
     <BottomTab.Navigator
       initialRouteName="Recent"
       screenOptions={{
-        headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+        headerStyle: { backgroundColor: "rgb(79, 70, 229)" },
         headerTintColor: "white",
         tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
         tabBarActiveTintColor: GlobalStyles.colors.accent500,
@@ -58,7 +58,9 @@ function ExpenseOverview() {
               size={24}
               color={tintColor}
               onPress={() => {
-                navigation.navigate("ManageExpense");
+                return navigation.navigate("ManageExpense", {
+                  expenseId: null,
+                });
               }}
             />
           ),

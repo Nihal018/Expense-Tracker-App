@@ -2,7 +2,7 @@ import { View, StyleSheet, FlatList } from "react-native";
 import ExpenseItem from "./ExpenseItem";
 
 export default function ExpenseList({ list }) {
-  const List = list; // will add logic for checking dates
+  const List = list;
 
   const renderListItem = ({ item }) => {
     const ExpenseItemProps = {

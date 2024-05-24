@@ -11,7 +11,9 @@ function Header() {
   return (
     <View className="w-full h-auto bg-indigo-600 flex-row justify-between align-baseline text-2xl ">
       <View className=" mx-6 mb-4 mt-6">
-        <Text className="text-white text-lg">Recent Expenses</Text>
+        <Text className="text-white text-lg font-extrabold">
+          Recent Expenses
+        </Text>
       </View>
       <View className="mx-6 mb-4 mt-6">
         <Pressable
