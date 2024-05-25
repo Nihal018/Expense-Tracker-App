@@ -4,7 +4,7 @@ import Expense from "../models/Expense";
 
 export const ExpensesContext = createContext({
   expenses: [],
-  addExpense: ({ date, cost, title }) => {},
+  addExpense: ({ date, cost, title, id }) => {},
   setExpense: (expenses) => {},
   updateExpense: (id, { title, date, cost }) => {},
   deleteExpense: (id) => {},
@@ -13,10 +13,10 @@ export const ExpensesContext = createContext({
 function ExpensesReducer(state, action) {
   switch (action.type) {
     case "ADD":
-      const id = new Date().toString() + Math.random().toString();
-      return [{ ...action.payload, id: id }, ...state];
+      return [action.payload, ...state];
     case "SET":
-      return action.payload;
+      const inverted = action.payload.reverse();
+      return inverted;
     case "UPDATE":
       const updatableExpenseIndex = state.findIndex(
         (expense) => expense.id === action.payload.id
@@ -49,7 +49,7 @@ function ExpensesContextProvider({ children }) {
   }
 
   function updateExpense(id, expenseData) {
-    dispatch({ type: "UPDATE", payload: { ...expenseData, id: id } });
+    dispatch({ type: "UPDATE", payload: { data: expenseData, id: id } });
   }
 
   const value = {

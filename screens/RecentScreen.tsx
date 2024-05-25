@@ -5,16 +5,30 @@ import { useContext, useEffect, useState } from "react";
 import { ExpensesContext } from "../store/exoenses-context";
 import { getDateMinusDays } from "../util/date";
 import { fetchExpense } from "../util/http";
+import LoadingOverlay from "../components/UI/LoadingOverlay";
+import ErrorOverlay from "../components/UI/ErrorOverlay";
 function RecentScreen({ navigation }) {
+  const [isFetching, setIsFetching] = useState(false);
   const ExpenseCxt = useContext(ExpensesContext);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function getExpense() {
-      const expenses = await fetchExpense();
-      ExpenseCxt.setExpense(expenses);
+      setIsFetching(true);
+      try {
+        const expenses = await fetchExpense();
+        ExpenseCxt.setExpense(expenses);
+      } catch (error) {
+        setError("Could not fetch expenses!");
+      }
+      setIsFetching(false);
     }
     getExpense();
   }, []);
+
+  if (isFetching) return <LoadingOverlay />;
+
+  if (error && !isFetching) return <ErrorOverlay message={error} />;
 
   const recentExpenses = ExpenseCxt.expenses.filter((expense) => {
     const today = new Date();

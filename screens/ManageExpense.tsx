@@ -1,13 +1,17 @@
-import { useContext, useLayoutEffect } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { GlobalStyles } from "../constants/styles";
 import IconButton from "../components/UI/IconButtons";
-import Button from "../components/UI/Button";
 import { ExpensesContext } from "../store/exoenses-context";
 import ExpenseForm from "../components/ManageExpense/ExpenseForm";
-import { storeExpense } from "../util/http";
+import { deleteExpense, storeExpense, updateExpense } from "../util/http";
+import LoadingOverlay from "../components/UI/LoadingOverlay";
+import ErrorOverlay from "../components/UI/ErrorOverlay";
 
 export default function ManageExpense({ route, navigation }) {
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState("");
+
   const editedExpenseId = route.params?.expenseId;
   const isEditting = !!editedExpenseId;
   const ExpensesCxt = useContext(ExpensesContext);
@@ -22,25 +26,44 @@ export default function ManageExpense({ route, navigation }) {
     return expense.id === editedExpenseId;
   });
 
-  function confirmHandler(expenseData) {
-    if (isEditting) {
-      ExpensesCxt.updateExpense(editedExpenseId, expenseData);
-    } else {
-      storeExpense(expenseData);
-      ExpensesCxt.addExpense(expenseData);
-    }
+  async function confirmHandler(expenseData) {
+    setIsSending(true);
+    try {
+      if (isEditting) {
+        ExpensesCxt.updateExpense(editedExpenseId, expenseData);
 
-    navigation.goBack();
+        await updateExpense(editedExpenseId, expenseData);
+      } else {
+        const id = await storeExpense(expenseData);
+        ExpensesCxt.addExpense({ ...expenseData, id: id });
+      }
+
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not send data - please try again later");
+      setIsSending(false);
+    }
   }
 
   function cancelHandler() {
     navigation.goBack();
   }
 
-  function deletePressHandler() {
-    ExpensesCxt.deleteExpense(editedExpenseId);
-    navigation.goBack();
+  async function deletePressHandler() {
+    setIsSending(true);
+    try {
+      await deleteExpense(editedExpenseId);
+      ExpensesCxt.deleteExpense(editedExpenseId);
+      navigation.goBack();
+    } catch (error) {
+      setError("Could not delete the expense - please try again later");
+      setIsSending(false);
+    }
   }
+
+  if (isSending) return <LoadingOverlay />;
+
+  if (error && !isSending) return <ErrorOverlay message={error} />;
 
   return (
     <View style={styles.container}>
